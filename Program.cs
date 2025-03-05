@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace Mars_Rover_Assessment
 {
     internal class Program
     {
-         public static Coordinates Coords = new Coordinates();
+        public static Coordinates Coords = new Coordinates();
 
         static void Main(string[] args)
         {
@@ -51,7 +52,15 @@ namespace Mars_Rover_Assessment
             if (Regex.IsMatch(StartPoint, @"^\d+\s\d+\s[NSEW]$"))
             {
                 Coords.SetStart(StartPoint);
-                AskMovement();
+                if (Coords.GetCurrentX() > Coords.GetMaxX() || Coords.GetCurrentY() > Coords.GetMaxY())
+                {
+                    Console.WriteLine("Starting position is not within the bounds of the plateau.");
+                    AskStartPoint();
+                }
+                else
+                {
+                    AskMovement();
+                }
             }
             else
             {
@@ -69,7 +78,7 @@ namespace Mars_Rover_Assessment
 
         private static void CheckMovement(string Movement)
         {
-            if(Regex.IsMatch(Movement, @"^[LMR]+$"))
+            if (Regex.IsMatch(Movement, @"^[LMR]+$"))
             {
                 Coords.SetMovement(Movement);
             }
@@ -77,6 +86,79 @@ namespace Mars_Rover_Assessment
             {
                 Console.WriteLine("Invalid format.");
                 AskMovement();
+            }
+
+            foreach (char c in Coords.GetMovement())
+            {
+                if (c == 'L')
+                {
+                    Coords.CalculateLeft(Coords.GetCurrentDirection());
+                }
+                else if (c == 'R')
+                {
+                    Coords.CalculateRight(Coords.GetCurrentDirection());
+                }
+                else if (c == 'M')
+                {
+                    char direction = Coords.GetCurrentDirection();
+                    int x = Coords.GetCurrentX();
+                    int y = Coords.GetCurrentY();
+                    Coords.SetVisited(x, y);
+                    if (direction == 'N')
+                    {
+                        if (Coords.GetMaxY() >= y + 1)
+                        {
+                            Coords.SetCurrentY(y + 1);
+                        }
+                    }
+                    else if (direction == 'S')
+                    {
+                        if (0 <= y - 1)
+                        {
+                            Coords.SetCurrentY(y - 1);
+                        }
+                    }
+                    else if (direction == 'E')
+                    {
+                        if (Coords.GetMaxX() >= x + 1)
+                        {
+                            Coords.SetCurrentX(x + 1);
+                        }
+                    }
+                    else if (direction == 'W')
+                    {
+                        if (0 <= x - 1)
+                        {
+                            Coords.SetCurrentX(x - 1);
+                        }
+                    }
+
+                }
+            }
+            Console.Write(Coords.GetCurrentX());
+            Console.Write(Coords.GetCurrentY());
+            Console.Write(Coords.GetCurrentDirection());
+            Console.WriteLine();
+            Coords.DisplayVisited();
+            MoreRovers();
+        }
+
+        private static void MoreRovers()
+        {
+            Console.WriteLine("Any more rovers? yes(1) or no(2)");
+            int more = int.Parse(Console.ReadLine());
+            if (more == 1)
+            {
+                AskStartPoint();
+            }
+            else if (more == 2)
+            {
+                
+            }
+            else
+            {
+                Console.WriteLine("Invalid format.");
+                MoreRovers();
             }
         }
     }
