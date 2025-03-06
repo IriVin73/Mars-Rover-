@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -42,6 +43,7 @@ namespace Mars_Rover_Assessment
 
         private static void AskStartPoint()
         {
+            Console.WriteLine();
             Console.WriteLine("Insert rover start point and heading:");
             string StartPoint = Console.ReadLine();
             CheckStartPoint(StartPoint);
@@ -73,6 +75,7 @@ namespace Mars_Rover_Assessment
 
         private static void AskMovement()
         {
+            Console.WriteLine();
             Console.WriteLine("Insert movement commands:");
             string Movement = Console.ReadLine();
             CheckMovement(Movement);
@@ -80,6 +83,7 @@ namespace Mars_Rover_Assessment
 
         private static void CheckMovement(string Movement)
         {
+            //should only contain the characters 'L', 'M' and 'R'
             if (Regex.IsMatch(Movement, @"^[LMR]+$"))
             {
                 Coords.SetMovement(Movement);
@@ -105,11 +109,13 @@ namespace Mars_Rover_Assessment
                     char direction = Coords.GetCurrentDirection();
                     int x = Coords.GetCurrentX();
                     int y = Coords.GetCurrentY();
+                    //adds coordinate to an array to display later
                     SetVisited(x, y);
                     if (direction == 'N')
                     {
                         if (Coords.GetMaxY() >= y + 1)
                         {
+                            //moves 1 unit upwards
                             Coords.SetCurrentY(y + 1);
                         }
                     }
@@ -117,6 +123,7 @@ namespace Mars_Rover_Assessment
                     {
                         if (0 <= y - 1)
                         {
+                            //moves 1 unit downwards
                             Coords.SetCurrentY(y - 1);
                         }
                     }
@@ -124,6 +131,7 @@ namespace Mars_Rover_Assessment
                     {
                         if (Coords.GetMaxX() >= x + 1)
                         {
+                            //moves 1 unit to the right
                             Coords.SetCurrentX(x + 1);
                         }
                     }
@@ -131,18 +139,26 @@ namespace Mars_Rover_Assessment
                     {
                         if (0 <= x - 1)
                         {
+                            //moves 1 unit to the right
                             Coords.SetCurrentX(x - 1);
                         }
                     }
 
                 }
             }
-            Console.Write(Coords.GetCurrentX());
+            Console.WriteLine();
+            //outputs final coordinates and direction
+            Console.Write("Final Coordinates: "+Coords.GetCurrentX());
             Console.Write(Coords.GetCurrentY());
             Console.Write(Coords.GetCurrentDirection());
+            //adds final coordinate to array of visited coordinates
+            SetVisited(Coords.GetCurrentX(),Coords.GetCurrentY());
             Console.WriteLine();
+            //displays visited coordinates
             Coords.DisplayVisited();
+            //displays grid visualising visited coordinates
             Coords.DisplayGrid();
+            //asks if there are more rovers
             MoreRovers();
         }
 
@@ -152,11 +168,14 @@ namespace Mars_Rover_Assessment
             //adds visited coordinates to a list of tuples
             Visited.Add(new Tuple<int, int>(X, Y));
             char[,] Grid = Coords.GetGrid();
-            Grid[Y, X] = 'X';
+            //flips y coordinate so bottom right coordinate is (0, 0)
+            int FlipY = Coords.GetMaxY() - Y;
+            Grid[FlipY, X] = 'X';
         }
 
         private static void MoreRovers()
         {
+            Console.WriteLine();
             Console.WriteLine("Any more rovers? yes(1) or no(2)");
             int more = int.Parse(Console.ReadLine());
             if (more == 1)

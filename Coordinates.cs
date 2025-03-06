@@ -14,13 +14,11 @@ namespace Mars_Rover_Assessment
         private List<Tuple<int, int>> Visited;
         private char[,] Grid;
 
-        public Coordinates() 
-        { 
-            
-        }
+        public Coordinates() { }
 
         public void SetMax(string UpperRight)
         {
+            //splits upper right coordinate into highest x and y values
             string[] tokens = UpperRight.Split(' ');
             MaxX = int.Parse(tokens[0]);
             MaxY = int.Parse(tokens[1]);
@@ -28,63 +26,51 @@ namespace Mars_Rover_Assessment
 
         public void SetStart(string StartPoint)
         {
+            //splits starting point into starting x-value, y-value and direction
             string[] tokens = StartPoint.Split(' ');
             CurrentX = int.Parse(tokens[0]);
             CurrentY = int.Parse(tokens[1]);
             CurrentDirection = char.Parse(tokens[2]);
-            Program.SetVisited(CurrentX, CurrentY);
         }
 
         public void SetMovement(string Movement)
         { this.Movement = Movement; }
 
         public string GetMovement()
-        {
-            return this.Movement;
-        }
+        {return this.Movement;}
 
         public char GetCurrentDirection()
-        {
-            return this.CurrentDirection;
-        }
+        {return this.CurrentDirection;}
 
         public int GetCurrentX()
-        {
-            return this.CurrentX;
-        }
+        {return this.CurrentX;}
+
         public void SetCurrentX(int X)
-        {
-            this.CurrentX = X;
-        }
+        {this.CurrentX = X;}
+
         public int GetCurrentY()
-        {
-            return this.CurrentY;
-        }
+        {return this.CurrentY;}
+
         public void SetCurrentY(int Y)
-        {
-            this.CurrentY = Y;
-        }
+        {this.CurrentY = Y;}
+
         public int GetMaxX()
-        {
-            return this.MaxX;
-        }
+        {return this.MaxX;}
+
         public int GetMaxY()
-        {
-            return this.MaxY;
-        }
+        {return this.MaxY;}
 
         public List<Tuple<int,int>> GetVisited()
-        {
-            return this.Visited;
-        }
+        {return this.Visited;}
 
         public void InitialiseGrid()
         {
             Visited = new List<Tuple<int, int>>();
-            Grid = new char[MaxY+1, MaxX+1];
-            for (int y = 0; y <= MaxY; y++)
+            //ensures that the 0 column and row is included
+            Grid = new char[MaxY+2, MaxX+2];
+            for (int y = 0; y < Grid.GetLength(0); y++)
             {
-                for (int x = 0; x <= MaxX; x++)
+                for (int x = 0; x < Grid.GetLength(1); x++)
                 {
                     //unvisited
                     Grid[y, x] = '-';
@@ -93,12 +79,11 @@ namespace Mars_Rover_Assessment
         }
 
         public char[,] GetGrid()
-        {
-            return this.Grid;
-        }
+        {return this.Grid;}
 
         public void DisplayVisited()
         {
+            Console.WriteLine();
             Console.WriteLine("Visited Coordinates:");
             foreach (var coordinate in Visited)
             {
@@ -108,20 +93,32 @@ namespace Mars_Rover_Assessment
 
         public void DisplayGrid()
         {
+            Console.WriteLine();
             Console.WriteLine("Grid:");
-            for (int y = 0; y < MaxY; y++)
+            for (int y = 0; y <= MaxY; y++)
             {
-                for (int x = 0; x < MaxX; x++)
+                for (int x = 0; x <= MaxX; x++)
                 {
+                    if (Grid[y, x] == 'X')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }
+                    else if (Grid[y, x] == '-')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+
                     Console.Write(Grid[y, x] + " ");
                 }
                 Console.WriteLine();
+                Console.ResetColor();
             }
         }
 
 
         public void CalculateLeft(char StartDirection)
         {
+            //chooses direction one left of the current one
             char[] Left = { 'N', 'W', 'S', 'E' };
             int CurrentIndex = Array.IndexOf(Left, StartDirection);
             //circular array
@@ -134,11 +131,11 @@ namespace Mars_Rover_Assessment
                 CurrentIndex++;
             }
             CurrentDirection = Left[CurrentIndex];
-
         }
 
         public void CalculateRight(char StartDirection)
         {
+            //chooses direction one right of the current one
             char[] Right = { 'N', 'E', 'S', 'W' };
             int CurrentIndex = Array.IndexOf(Right, StartDirection);
             if (CurrentIndex == 3)
