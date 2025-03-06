@@ -30,6 +30,7 @@ namespace Mars_Rover_Assessment
             if (Regex.IsMatch(UpperRight, @"^\d+\s\d+$"))
             {
                 Coords.SetMax(UpperRight);
+                Coords.InitialiseGrid();
                 AskStartPoint();
             }
             else
@@ -60,6 +61,7 @@ namespace Mars_Rover_Assessment
                 else
                 {
                     AskMovement();
+                    
                 }
             }
             else
@@ -103,7 +105,7 @@ namespace Mars_Rover_Assessment
                     char direction = Coords.GetCurrentDirection();
                     int x = Coords.GetCurrentX();
                     int y = Coords.GetCurrentY();
-                    Coords.SetVisited(x, y);
+                    SetVisited(x, y);
                     if (direction == 'N')
                     {
                         if (Coords.GetMaxY() >= y + 1)
@@ -140,7 +142,17 @@ namespace Mars_Rover_Assessment
             Console.Write(Coords.GetCurrentDirection());
             Console.WriteLine();
             Coords.DisplayVisited();
+            Coords.DisplayGrid();
             MoreRovers();
+        }
+
+        public static void SetVisited(int X, int Y)
+        {
+            List<Tuple<int, int>> Visited = Coords.GetVisited();
+            //adds visited coordinates to a list of tuples
+            Visited.Add(new Tuple<int, int>(X, Y));
+            char[,] Grid = Coords.GetGrid();
+            Grid[Y, X] = 'X';
         }
 
         private static void MoreRovers()

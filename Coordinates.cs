@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Mars_Rover_Assessment
 {
@@ -16,9 +11,13 @@ namespace Mars_Rover_Assessment
         private int CurrentX;
         private int CurrentY;
         private char CurrentDirection;
-        private int[,] Visited;
+        private List<Tuple<int, int>> Visited;
+        private char[,] Grid;
 
-        public Coordinates() { }
+        public Coordinates() 
+        { 
+            
+        }
 
         public void SetMax(string UpperRight)
         {
@@ -33,6 +32,7 @@ namespace Mars_Rover_Assessment
             CurrentX = int.Parse(tokens[0]);
             CurrentY = int.Parse(tokens[1]);
             CurrentDirection = char.Parse(tokens[2]);
+            Program.SetVisited(CurrentX, CurrentY);
         }
 
         public void SetMovement(string Movement)
@@ -73,21 +73,49 @@ namespace Mars_Rover_Assessment
             return this.MaxY;
         }
 
-        public void SetVisited(int X, int Y)
+        public List<Tuple<int,int>> GetVisited()
         {
-            Visited = new int[MaxX*MaxY, 2];
-            Visited[Visited.Length, 0] = X;
-            Visited[Visited.Length, 1] = Y;
+            return this.Visited;
+        }
+
+        public void InitialiseGrid()
+        {
+            Visited = new List<Tuple<int, int>>();
+            Grid = new char[MaxY+1, MaxX+1];
+            for (int y = 0; y <= MaxY; y++)
+            {
+                for (int x = 0; x <= MaxX; x++)
+                {
+                    //unvisited
+                    Grid[y, x] = '-';
+                }
+            }
+        }
+
+        public char[,] GetGrid()
+        {
+            return this.Grid;
         }
 
         public void DisplayVisited()
         {
-            foreach (int X in Visited)
+            Console.WriteLine("Visited Coordinates:");
+            foreach (var coordinate in Visited)
             {
-                foreach (int Y in Visited)
+                Console.WriteLine($"({coordinate.Item1}, {coordinate.Item2})");
+            }
+        }
+
+        public void DisplayGrid()
+        {
+            Console.WriteLine("Grid:");
+            for (int y = 0; y < MaxY; y++)
+            {
+                for (int x = 0; x < MaxX; x++)
                 {
-                    Console.WriteLine("({X}, {Y})");
+                    Console.Write(Grid[y, x] + " ");
                 }
+                Console.WriteLine();
             }
         }
 
